@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
+import Evaluation.Precision;
+
 /**
  * Created by workshop on 9/18/2015.
  */
 public class SoundEffectDemo extends JFrame implements ActionListener{
 
     JPanel contentPane;
-    JButton openButton, searchButton, queryButton;
+    JButton openButton, searchButton, queryButton, runTestButton;
     JFileChooser fileChooser;
 
     File queryAudio = null;
@@ -27,6 +29,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
      * Please Replace the 'basePath' with specific path of train set of audio files in your PC.
      */
     String basePath = "D:/GitHub/AudioSearchData/data/input/train/";
+    String testPath = "D:/GitHub/AudioSearchData/data/input/test/";
 
 
     JButton[] resultButton = new JButton[resultSize];
@@ -50,11 +53,15 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         searchButton = new JButton("Search");
         searchButton.addActionListener(this);
+        
+        runTestButton = new JButton("Run Test");
+        runTestButton.addActionListener(this);
 
         JPanel queryPanel = new JPanel();
         queryPanel.add(openButton);
         queryPanel.add(queryButton);
         queryPanel.add(searchButton);
+        queryPanel.add(runTestButton);
 
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new GridLayout(0, 4, 60, 60));
@@ -118,6 +125,12 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         }else if (e.getSource() == queryButton){
             new SoundEffect(queryAudio.getAbsolutePath()).play();
+        }else if (e.getSource() == runTestButton) {
+        	// do something here
+//            SearchDemo searchDemo = new SearchDemo();
+//            searchDemo.trainFeatureList();
+        	Precision precision = new Precision();
+        	System.out.println(precision.evaluate(testPath));
         }else {
             for (int i = 0; i < resultSize; i ++){
                 if (e.getSource() == resultButton[i]){
