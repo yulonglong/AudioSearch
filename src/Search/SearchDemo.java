@@ -1,6 +1,8 @@
 package Search;
 
+import Feature.Energy;
 import Feature.MagnitudeSpectrum;
+import Player.SoundEffectDemo;
 import SignalProcess.WaveIO;
 import Distance.Cosine;
 import Tool.SortHashMapByValue;
@@ -15,26 +17,28 @@ import java.util.*;
  * Created by workshop on 9/18/2015.
  */
 public class SearchDemo {
-    /**
-     * Please replace the 'trainPath' with the specific path of train set in your PC.
-     */
-    protected final static String trainPath = "D:/GitHub/AudioSearchData/data/input/train/";
-
-
+	private static final String s_msFeaturePath = "data/feature/magnitudeSpectrum.txt";
+	private static final String s_energyFeaturePath = "data/feature/energy.txt";
+	
+	
+	private static final double s_msFeatureWeight = 1;
+	private static final double s_energyFeatureWeight = 1;
+	
     /***
      * Get the feature of train set via the specific feature extraction method, and write it into offline file for efficiency;
      * Please modify this function, select or combine the methods (in the Package named 'Feature') to extract feature, such as Zero-Crossing, Energy, Magnitude-
      * Spectrum and MFCC by yourself.
      * @return the map of training features, Key is the name of file, Value is the array/vector of features.
      */
-    public HashMap<String,double[]> trainFeatureList(){
-        File trainFolder = new File(trainPath);
+	
+    public void trainFeatureList(){
+        File trainFolder = new File(SoundEffectDemo.s_basePath);
         File[] trainList = trainFolder.listFiles();
 
-        HashMap<String, double[]> featureList = new HashMap<>();
         try {
 
-            FileWriter fw = new FileWriter("data/feature/allFeature.txt");
+            FileWriter fwMs = new FileWriter(s_msFeaturePath);
+            FileWriter fwEnergy = new FileWriter(s_energyFeaturePath);
 
             for (int i = 0; i < trainList.length; i++) {
                 WaveIO waveIO = new WaveIO();
@@ -45,34 +49,31 @@ public class SearchDemo {
                  */
                 MagnitudeSpectrum ms = new MagnitudeSpectrum();
                 double[] msFeature = ms.getFeature(signal);
-
-                /**
-                 * Write the extracted feature into offline file;
-                 */
-                featureList.put(trainList[i].getName(), msFeature);
+                
+                Energy energy = new Energy();
+                double[] energyFeature = energy.getFeature(signal);
+                
 
                 String line = trainList[i].getName() + "\t";
                 for (double f: msFeature){
                     line += f + "\t";
                 }
+                fwMs.append(line+"\n");
+                
+                String line2 = trainList[i].getName() + "\t";
+                for (double f: energyFeature){
+                    line2 += f + "\t";
+                }
+                fwEnergy.append(line2+"\n");
 
-                fw.append(line+"\n");
-
+                
                 System.out.println("@=========@" + i);
             }
-            fw.close();
+            fwMs.close();
+            fwEnergy.close();
         }catch (Exception e){
             e.printStackTrace();
         }
-        try {
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-        return featureList;
     }
 
     /***
@@ -87,7 +88,9 @@ public class SearchDemo {
 
         short[] inputSignal = waveIO.readWave(query);
         MagnitudeSpectrum ms = new MagnitudeSpectrum();
-        double[] msFeature1 = ms.getFeature(inputSignal);
+        double[] msFeatureQuery = ms.getFeature(inputSignal);
+        Energy energy = new Energy();
+        double[] energyFeatureQuery = energy.getFeature(inputSignal);
         HashMap<String, Double> simList = new HashMap<String, Double>();
 
         /**
@@ -98,11 +101,15 @@ public class SearchDemo {
         /**
          * Load the offline file of features (the result of function 'trainFeatureList()'), modify it by yourself please;
          */
-        HashMap<String, double[]> trainFeatureList = readFeature("data/feature/allFeature.txt");
+        HashMap<String, double[]> msFeature = readFeature(s_msFeaturePath);
+        HashMap<String, double[]> energyFeature = readFeature(s_energyFeaturePath);
 
 //        System.out.println(trainFeatureList.size() + "=====");
-        for (Map.Entry f: trainFeatureList.entrySet()){
-            simList.put((String)f.getKey(), cosine.getDistance(msFeature1, (double[]) f.getValue()));
+        for (Map.Entry f: msFeature.entrySet()){
+            simList.put((String)f.getKey(), s_msFeatureWeight * cosine.getDistance(msFeatureQuery, (double[]) f.getValue()));
+        }
+        for (Map.Entry f: energyFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (s_energyFeatureWeight * cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
         }
 
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
@@ -143,19 +150,12 @@ public class SearchDemo {
 
                 line = br.readLine();
             }
+            br.close();
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
         return fList;
-    }
-
-    public static void main(String[] args){
-        SearchDemo searchDemo = new SearchDemo();
-        /**
-         * Example of searching, selecting 'bus2.wav' as query;
-         */
-        searchDemo.resultList("data/input/test/bus2.wav");
     }
 }

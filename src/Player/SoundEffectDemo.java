@@ -17,7 +17,7 @@ import Evaluation.Recall;
 public class SoundEffectDemo extends JFrame implements ActionListener{
 
     JPanel contentPane;
-    JButton openButton, searchButton, queryButton, runTestButton;
+    JButton openButton, searchButton, queryButton, runTestButton, trainButton;
     JFileChooser fileChooser;
 
     File queryAudio = null;
@@ -29,8 +29,8 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     /**
      * Please Replace the 'basePath' with specific path of train set of audio files in your PC.
      */
-    String basePath = "D:/GitHub/AudioSearchData/data/input/train/";
-    String testPath = "D:/GitHub/AudioSearchData/data/input/test/";
+    public static final String s_basePath = "D:/GitHub/AudioSearchData/data/input/train/";
+    public static final String s_testPath = "D:/GitHub/AudioSearchData/data/input/test/";
 
 
     JButton[] resultButton = new JButton[resultSize];
@@ -57,12 +57,16 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         
         runTestButton = new JButton("Run Test");
         runTestButton.addActionListener(this);
+        
+        trainButton = new JButton("Train");
+        trainButton.addActionListener(this);
 
         JPanel queryPanel = new JPanel();
         queryPanel.add(openButton);
         queryPanel.add(queryButton);
         queryPanel.add(searchButton);
         queryPanel.add(runTestButton);
+        queryPanel.add(trainButton);
 
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new GridLayout(0, 4, 60, 60));
@@ -131,13 +135,18 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 //            SearchDemo searchDemo = new SearchDemo();
 //            searchDemo.trainFeatureList();
         	Precision precision = new Precision();
-        	System.out.println(precision.evaluate(testPath));
-        	Recall recall = new Recall();
-        	System.out.println(recall.evaluate(testPath));
-        }else {
+        	System.out.println(precision.evaluate(s_testPath));
+//        	Recall recall = new Recall();
+//        	System.out.println(recall.evaluate(s_testPath));
+        }else if (e.getSource() == trainButton) {
+        	SearchDemo searchDemo = new SearchDemo();
+        	searchDemo.trainFeatureList();
+        }
+        
+        else {
             for (int i = 0; i < resultSize; i ++){
                 if (e.getSource() == resultButton[i]){
-                    String filePath = basePath+resultFiles.get(i);
+                    String filePath = s_basePath+resultFiles.get(i);
                     new SoundEffect(filePath).play();
                     break;
                 }
