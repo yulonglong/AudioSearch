@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import Evaluation.Precision;
+import Evaluation.Recall;
 
 /**
  * Created by workshop on 9/18/2015.
@@ -131,6 +132,8 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 //            searchDemo.trainFeatureList();
         	Precision precision = new Precision();
         	System.out.println(precision.evaluate(testPath));
+        	Recall recall = new Recall();
+        	System.out.println(recall.evaluate(testPath));
         }else {
             for (int i = 0; i < resultSize; i ++){
                 if (e.getSource() == resultButton[i]){
