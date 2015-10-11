@@ -2,6 +2,7 @@ package Search;
 
 import Feature.Energy;
 import Feature.MagnitudeSpectrum;
+import Feature.ZeroCrossing;
 import Player.SoundEffectDemo;
 import SignalProcess.WaveIO;
 import Distance.Cosine;
@@ -19,10 +20,13 @@ import java.util.*;
 public class SearchDemo {
 	private static final String s_msFeaturePath = "data/feature/magnitudeSpectrum.txt";
 	private static final String s_energyFeaturePath = "data/feature/energy.txt";
+	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
+			
 	
 	
 	private static final double s_msFeatureWeight = 1;
 	private static final double s_energyFeatureWeight = 1;
+	private static final double s_zcFeatureWeight = 1;
 	
     /***
      * Get the feature of train set via the specific feature extraction method, and write it into offline file for efficiency;
@@ -39,38 +43,47 @@ public class SearchDemo {
 
             FileWriter fwMs = new FileWriter(s_msFeaturePath);
             FileWriter fwEnergy = new FileWriter(s_energyFeaturePath);
+            FileWriter fwZc = new FileWriter(s_zcFeaturePath);
 
             for (int i = 0; i < trainList.length; i++) {
                 WaveIO waveIO = new WaveIO();
                 short[] signal = waveIO.readWave(trainList[i].getAbsolutePath());
 
-                /**
-                 * Example of extracting feature via MagnitudeSpectrum, modify it by yourself.
-                 */
+                // Extract Magnitude Spectrum
                 MagnitudeSpectrum ms = new MagnitudeSpectrum();
                 double[] msFeature = ms.getFeature(signal);
                 
-                Energy energy = new Energy();
-                double[] energyFeature = energy.getFeature(signal);
-                
-
                 String line = trainList[i].getName() + "\t";
                 for (double f: msFeature){
                     line += f + "\t";
                 }
                 fwMs.append(line+"\n");
                 
+                // Extract Energy
+                Energy energy = new Energy();
+                double[] energyFeature = energy.getFeature(signal);
+                
                 String line2 = trainList[i].getName() + "\t";
                 for (double f: energyFeature){
                     line2 += f + "\t";
                 }
                 fwEnergy.append(line2+"\n");
-
+                
+                // Extract Zero Crossing
+                ZeroCrossing zc = new ZeroCrossing();
+                double[] zcFeature = zc.getFeature(signal);
+                
+                String line3 = trainList[i].getName() + "\t";
+                for (double f: zcFeature){
+                    line3 += f + "\t";
+                }
+                fwZc.append(line3+"\n");
                 
                 System.out.println("@=========@" + i);
             }
             fwMs.close();
             fwEnergy.close();
+            fwZc.close();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -91,6 +104,9 @@ public class SearchDemo {
         double[] msFeatureQuery = ms.getFeature(inputSignal);
         Energy energy = new Energy();
         double[] energyFeatureQuery = energy.getFeature(inputSignal);
+        ZeroCrossing zc = new ZeroCrossing();
+        double[] zcFeatureQuery = zc.getFeature(inputSignal);
+        
         HashMap<String, Double> simList = new HashMap<String, Double>();
 
         /**
@@ -103,6 +119,7 @@ public class SearchDemo {
          */
         HashMap<String, double[]> msFeature = readFeature(s_msFeaturePath);
         HashMap<String, double[]> energyFeature = readFeature(s_energyFeaturePath);
+        HashMap<String, double[]> zcFeature = readFeature(s_zcFeaturePath);
 
 //        System.out.println(trainFeatureList.size() + "=====");
         for (Map.Entry f: msFeature.entrySet()){
@@ -110,6 +127,9 @@ public class SearchDemo {
         }
         for (Map.Entry f: energyFeature.entrySet()){
             simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (s_energyFeatureWeight * cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry f: zcFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (s_zcFeatureWeight * cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
         }
 
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
