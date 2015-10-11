@@ -1,9 +1,11 @@
 package Search;
 
 import Feature.Energy;
+import Feature.MFCC;
 import Feature.MagnitudeSpectrum;
 import Feature.ZeroCrossing;
 import Player.SoundEffectDemo;
+import SignalProcess.Frames;
 import SignalProcess.WaveIO;
 import Distance.Cosine;
 import Tool.SortHashMapByValue;
@@ -21,12 +23,14 @@ public class SearchDemo {
 	private static final String s_msFeaturePath = "data/feature/magnitudeSpectrum.txt";
 	private static final String s_energyFeaturePath = "data/feature/energy.txt";
 	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
+	private static final String s_mfccFeaturePath = "data/feature/mfcc.txt";
 			
 	
 	
 	private static final double s_msFeatureWeight = 1;
 	private static final double s_energyFeatureWeight = 1;
 	private static final double s_zcFeatureWeight = 1;
+	private static final double s_mfccFeatureWeight = 1;
 	
     /***
      * Get the feature of train set via the specific feature extraction method, and write it into offline file for efficiency;
@@ -44,6 +48,7 @@ public class SearchDemo {
             FileWriter fwMs = new FileWriter(s_msFeaturePath);
             FileWriter fwEnergy = new FileWriter(s_energyFeaturePath);
             FileWriter fwZc = new FileWriter(s_zcFeaturePath);
+            FileWriter fwMfcc = new FileWriter(s_mfccFeaturePath);
 
             for (int i = 0; i < trainList.length; i++) {
                 WaveIO waveIO = new WaveIO();
@@ -79,11 +84,23 @@ public class SearchDemo {
                 }
                 fwZc.append(line3+"\n");
                 
+                // Extract mfcc
+                MFCC mfcc = new MFCC(Frames.frameLength);
+                mfcc.process(signal);
+                double[] mfccFeature = mfcc.getMeanFeature();
+                
+                String line4 = trainList[i].getName() + "\t";
+                for (double f: mfccFeature){
+                    line4 += f + "\t";
+                }
+                fwMfcc.append(line4+"\n");
+                
                 System.out.println("@=========@" + i);
             }
             fwMs.close();
             fwEnergy.close();
             fwZc.close();
+            fwMfcc.close();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -106,6 +123,9 @@ public class SearchDemo {
         double[] energyFeatureQuery = energy.getFeature(inputSignal);
         ZeroCrossing zc = new ZeroCrossing();
         double[] zcFeatureQuery = zc.getFeature(inputSignal);
+        MFCC mfcc = new MFCC(Frames.frameLength);
+        mfcc.process(inputSignal);
+        double[] mfccFeatureQuery = mfcc.getMeanFeature();
         
         HashMap<String, Double> simList = new HashMap<String, Double>();
 
@@ -120,6 +140,7 @@ public class SearchDemo {
         HashMap<String, double[]> msFeature = readFeature(s_msFeaturePath);
         HashMap<String, double[]> energyFeature = readFeature(s_energyFeaturePath);
         HashMap<String, double[]> zcFeature = readFeature(s_zcFeaturePath);
+        HashMap<String, double[]> mfccFeature = readFeature(s_mfccFeaturePath);
 
 //        System.out.println(trainFeatureList.size() + "=====");
         for (Map.Entry f: msFeature.entrySet()){
@@ -130,6 +151,9 @@ public class SearchDemo {
         }
         for (Map.Entry f: zcFeature.entrySet()){
             simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (s_zcFeatureWeight * cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry f: mfccFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (s_mfccFeatureWeight * cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
 
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
