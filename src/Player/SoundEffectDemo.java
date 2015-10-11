@@ -15,10 +15,11 @@ import Evaluation.Precision;
  */
 public class SoundEffectDemo extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
-	JPanel contentPane;
+	JPanel m_contentPane;
     JButton openButton, searchButton, queryButton, runTestButton, trainButton, runGAButton;
     JFileChooser fileChooser;
-
+    public static JProgressBar s_progressBar = new JProgressBar();
+    
     File queryAudio = null;
     int resultSize = 20;
     /**
@@ -47,7 +48,21 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
     // Constructor
     public SoundEffectDemo() {
+    	m_contentPane = (JPanel)this.getContentPane();
+        setSize(m_windowWidth,m_windowHeight);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	
+    	// Initialize ProgressBar
+		
+		s_progressBar.setStringPainted(true);
+		m_contentPane.add(s_progressBar);
+		m_contentPane.setVisible(true);
+		setVisible(true);
+    	
     	m_searchDemo = new SearchDemo();
+
+        m_contentPane.remove(s_progressBar);
+        setVisible(false);
         // Pre-load all the sound files
         queryAudio = null;
         SoundEffect.volume = SoundEffect.Volume.LOW;  // un-mute
@@ -104,16 +119,14 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         resultPanel.setBorder(BorderFactory.createEmptyBorder(30,16,10,16));
 
-        contentPane = (JPanel)this.getContentPane();
+        m_contentPane.add(queryPanel, BorderLayout.PAGE_START);
+        m_contentPane.add(resultPanel, BorderLayout.CENTER);
+        
+        m_contentPane = (JPanel)this.getContentPane();
         setSize(m_windowWidth,m_windowHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        contentPane.add(queryPanel, BorderLayout.PAGE_START);
-        contentPane.add(resultPanel, BorderLayout.CENTER);
-
-        contentPane.setVisible(true);
-        setVisible(true);
-
+        m_contentPane.setVisible(true);
+		setVisible(true);
     }
 
     public void actionPerformed(ActionEvent e){

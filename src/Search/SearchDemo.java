@@ -20,6 +20,8 @@ import java.util.*;
  * Created by workshop on 9/18/2015.
  */
 public class SearchDemo {
+	public static final int s_numTrainingData = 1250;
+	
 	private static final String s_msFeaturePath = "data/feature/magnitudeSpectrum.txt";
 	private static final String s_energyFeaturePath = "data/feature/energy.txt";
 	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
@@ -41,10 +43,12 @@ public class SearchDemo {
     HashMap<String, double[]> m_mfccFeature;
 	
 	public SearchDemo() {
-		m_msFeature = readFeature(s_msFeaturePath);
-		m_energyFeature = readFeature(s_energyFeaturePath);
-		m_zcFeature = readFeature(s_zcFeaturePath);
-		m_mfccFeature = readFeature(s_mfccFeaturePath);
+		SoundEffectDemo.s_progressBar.setMinimum(0);
+		SoundEffectDemo.s_progressBar.setMaximum(s_numTrainingData*4);
+		m_msFeature = readFeature(s_msFeaturePath, s_numTrainingData*0);
+		m_energyFeature = readFeature(s_energyFeaturePath, s_numTrainingData*1);
+		m_zcFeature = readFeature(s_zcFeaturePath, s_numTrainingData*2);
+		m_mfccFeature = readFeature(s_mfccFeaturePath, s_numTrainingData*3);
 	}
 	
 	public void useDefinedWeight(boolean useMsFeature, boolean useEnergyFeature, boolean useZcFeature, boolean useMfccFeature) {
@@ -192,7 +196,7 @@ public class SearchDemo {
      * @param featurePath the path of offline file including the features of training set.
      * @return the map of training features, Key is the name of file, Value is the array/vector of features.
      */
-    private HashMap<String, double[]> readFeature(String featurePath){
+    private HashMap<String, double[]> readFeature(String featurePath, int currCount){
         HashMap<String, double[]> fList = new HashMap<>();
         try{
             FileReader fr = new FileReader(featurePath);
@@ -210,7 +214,13 @@ public class SearchDemo {
                 }
 
                 fList.put(split[0], fs);
-
+                
+                // Update ProgressBar
+                SoundEffectDemo.s_progressBar.setValue(currCount);
+        		double currPercentage = ((double) currCount / ((double) s_numTrainingData * 4.0)) * 100.0;
+        		SoundEffectDemo.s_progressBar.setString(String.format("%.2f", currPercentage) + "%");
+        		currCount++;
+        		
                 line = br.readLine();
             }
             br.close();
