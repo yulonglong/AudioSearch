@@ -4,8 +4,7 @@ package Distance;
  * Created by workshop on 9/18/2015.
  */
 public class Cosine {
-
-    public double getDistance(double[] query1, double[] query2){
+    public static double getDistance(double[] query1, double[] query2){
         if (query1.length != query2.length){
             System.err.println("The dimension of the two vectors does not match!");
 

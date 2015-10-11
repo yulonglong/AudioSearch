@@ -1,4 +1,5 @@
 package Player;
+import Search.GeneticAlgorithm;
 import Search.SearchDemo;
 
 import java.awt.*;
@@ -6,10 +7,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 
 import Evaluation.Precision;
-import Evaluation.Recall;
 
 /**
  * Created by workshop on 9/18/2015.
@@ -153,7 +152,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         }else if (e.getSource() == runTestButton) {
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         	m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
-        	System.out.println(Precision.evaluate(s_testPath, m_searchDemo));
+        	System.out.println(Precision.evaluate(m_searchDemo));
         	setCursor(Cursor.getDefaultCursor());
         }else if (e.getSource() == trainButton) {
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -161,7 +160,10 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         	searchDemo.trainFeatureList();
         	setCursor(Cursor.getDefaultCursor());
         }else if (e.getSource() == runGAButton) {
-        	
+        	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        	GeneticAlgorithm ga = new GeneticAlgorithm(m_searchDemo);
+        	ga.runGA();
+        	setCursor(Cursor.getDefaultCursor());
         }
         else {
             for (int i = 0; i < resultSize; i ++){

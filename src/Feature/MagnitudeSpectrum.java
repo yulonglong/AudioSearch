@@ -1,10 +1,6 @@
 package Feature;
 
 import SignalProcess.Frames;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by workshop on 9/18/2015.
  */

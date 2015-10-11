@@ -24,8 +24,6 @@ public class SearchDemo {
 	private static final String s_energyFeaturePath = "data/feature/energy.txt";
 	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
 	private static final String s_mfccFeaturePath = "data/feature/mfcc.txt";
-			
-	
 	
 	private static final double s_msFeatureWeight = 1;
 	private static final double s_energyFeatureWeight = 1;
@@ -58,6 +56,13 @@ public class SearchDemo {
 		if (useEnergyFeature) m_energyFeatureWeight = s_energyFeatureWeight;
 		if (useZcFeature) m_zcFeatureWeight = s_zcFeatureWeight;
 		if (useMfccFeature) m_mfccFeatureWeight = s_mfccFeatureWeight;
+	}
+	
+	public void setWeight(double msWeight, double energyWeight, double zcWeight, double mfccWeight) {
+		m_msFeatureWeight = msWeight;
+		m_energyFeatureWeight = energyWeight;
+		m_zcFeatureWeight = zcWeight;
+		m_mfccFeatureWeight = mfccWeight;
 	}
 	
     /***
@@ -157,39 +162,28 @@ public class SearchDemo {
         
         HashMap<String, Double> simList = new HashMap<String, Double>();
 
-        /**
-         * Example of calculating the distance via Cosine Similarity, modify it by yourself please.
-         */
-        Cosine cosine = new Cosine();
-
-        /**
-         * Load the offline file of features (the result of function 'trainFeatureList()'), modify it by yourself please;
-         */
-
-
-//        System.out.println(trainFeatureList.size() + "=====");
-        for (Map.Entry f: m_msFeature.entrySet()){
-            simList.put((String)f.getKey(), m_msFeatureWeight * cosine.getDistance(msFeatureQuery, (double[]) f.getValue()));
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+            simList.put((String)f.getKey(), m_msFeatureWeight * Cosine.getDistance(msFeatureQuery, (double[]) f.getValue()));
         }
-        for (Map.Entry f: m_energyFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_energyFeatureWeight * cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
+        for (Map.Entry<String,double[]> f: m_energyFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_energyFeatureWeight * Cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
         }
-        for (Map.Entry f: m_zcFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_zcFeatureWeight * cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
+        for (Map.Entry<String,double[]> f: m_zcFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_zcFeatureWeight * Cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
         }
-        for (Map.Entry f: m_mfccFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_mfccFeatureWeight * cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
+        for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
+            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_mfccFeatureWeight * Cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
 
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
         ArrayList<String> result = sortHM.sort(simList);
 
-        String out = query + ":";
-        for(int j = 0; j < result.size(); j++){
-            out += "\t" + result.get(j);
-        }
-
-        System.out.println(out);
+//        String out = query + ":";
+//        for(int j = 0; j < result.size(); j++){
+//            out += "\t" + result.get(j);
+//        }
+//
+//        System.out.println(out);
         return result;
     }
 

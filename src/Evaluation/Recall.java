@@ -3,6 +3,7 @@ package Evaluation;
 import java.io.File;
 import java.util.ArrayList;
 
+import Player.SoundEffectDemo;
 import Search.SearchDemo;
 
 /**
@@ -11,10 +12,10 @@ import Search.SearchDemo;
 public class Recall {
 	private static final int k = 125;
 
-	public double evaluate(String path, SearchDemo searchDemo) {
+	public static double evaluate(SearchDemo searchDemo) {
 		double totalRecall = 0;
 
-		File folder = new File(path);
+		File folder = new File(SoundEffectDemo.s_testPath);
 		File[] listOfFiles = folder.listFiles();
 
 		for (int d = 0; d < listOfFiles.length; d++) {
