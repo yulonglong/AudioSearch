@@ -15,9 +15,9 @@ import Evaluation.Recall;
  * Created by workshop on 9/18/2015.
  */
 public class SoundEffectDemo extends JFrame implements ActionListener{
-
-    JPanel contentPane;
-    JButton openButton, searchButton, queryButton, runTestButton, trainButton;
+	private static final long serialVersionUID = 1L;
+	JPanel contentPane;
+    JButton openButton, searchButton, queryButton, runTestButton, trainButton, runGAButton;
     JFileChooser fileChooser;
 
     File queryAudio = null;
@@ -43,9 +43,12 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     JButton[] resultButton = new JButton[resultSize];
     JLabel [] resultLabels = new JLabel[resultSize];
     ArrayList<String> resultFiles = new ArrayList<String>();
+    
+    SearchDemo m_searchDemo;
 
     // Constructor
     public SoundEffectDemo() {
+    	m_searchDemo = new SearchDemo();
         // Pre-load all the sound files
         queryAudio = null;
         SoundEffect.volume = SoundEffect.Volume.LOW;  // un-mute
@@ -67,6 +70,9 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         
         trainButton = new JButton("Train");
         trainButton.addActionListener(this);
+        
+        runGAButton = new JButton("Run GA");
+        runGAButton.addActionListener(this);
 
         JPanel queryPanel = new JPanel();
         queryPanel.add(openButton);
@@ -74,6 +80,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         queryPanel.add(searchButton);
         queryPanel.add(runTestButton);
         queryPanel.add(trainButton);
+        queryPanel.add(runGAButton);
         
         queryPanel.add(m_msCheckBox);
         queryPanel.add(m_energyCheckBox);
@@ -132,8 +139,8 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         }else if (e.getSource() == searchButton){
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            SearchDemo searchDemo = new SearchDemo(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
-            resultFiles = searchDemo.resultList(queryAudio.getAbsolutePath());
+            m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
+            resultFiles = m_searchDemo.resultList(queryAudio.getAbsolutePath());
 
             for (int i = 0; i < resultFiles.size(); i ++){
                 resultLabels[i].setText(resultFiles.get(i));
@@ -145,15 +152,17 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
             new SoundEffect(queryAudio.getAbsolutePath()).play();
         }else if (e.getSource() == runTestButton) {
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        	System.out.println(Precision.evaluate(s_testPath,m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected()));
+        	m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
+        	System.out.println(Precision.evaluate(s_testPath, m_searchDemo));
         	setCursor(Cursor.getDefaultCursor());
         }else if (e.getSource() == trainButton) {
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         	SearchDemo searchDemo = new SearchDemo();
         	searchDemo.trainFeatureList();
         	setCursor(Cursor.getDefaultCursor());
+        }else if (e.getSource() == runGAButton) {
+        	
         }
-        
         else {
             for (int i = 0; i < resultSize; i ++){
                 if (e.getSource() == resultButton[i]){

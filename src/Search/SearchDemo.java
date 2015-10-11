@@ -37,11 +37,23 @@ public class SearchDemo {
 	private double m_zcFeatureWeight = 0;
 	private double m_mfccFeatureWeight= 0;
 	
+    HashMap<String, double[]> m_msFeature;
+    HashMap<String, double[]> m_energyFeature;
+    HashMap<String, double[]> m_zcFeature;
+    HashMap<String, double[]> m_mfccFeature;
+	
 	public SearchDemo() {
-		
+		m_msFeature = readFeature(s_msFeaturePath);
+		m_energyFeature = readFeature(s_energyFeaturePath);
+		m_zcFeature = readFeature(s_zcFeaturePath);
+		m_mfccFeature = readFeature(s_mfccFeaturePath);
 	}
 	
-	public SearchDemo(boolean useMsFeature, boolean useEnergyFeature, boolean useZcFeature, boolean useMfccFeature) {
+	public void useDefinedWeight(boolean useMsFeature, boolean useEnergyFeature, boolean useZcFeature, boolean useMfccFeature) {
+		m_msFeatureWeight = 0;
+		m_energyFeatureWeight = 0;
+		m_zcFeatureWeight = 0;
+		m_mfccFeatureWeight= 0;
 		if (useMsFeature) m_msFeatureWeight = s_msFeatureWeight;
 		if (useEnergyFeature) m_energyFeatureWeight = s_energyFeatureWeight;
 		if (useZcFeature) m_zcFeatureWeight = s_zcFeatureWeight;
@@ -153,22 +165,19 @@ public class SearchDemo {
         /**
          * Load the offline file of features (the result of function 'trainFeatureList()'), modify it by yourself please;
          */
-        HashMap<String, double[]> msFeature = readFeature(s_msFeaturePath);
-        HashMap<String, double[]> energyFeature = readFeature(s_energyFeaturePath);
-        HashMap<String, double[]> zcFeature = readFeature(s_zcFeaturePath);
-        HashMap<String, double[]> mfccFeature = readFeature(s_mfccFeaturePath);
+
 
 //        System.out.println(trainFeatureList.size() + "=====");
-        for (Map.Entry f: msFeature.entrySet()){
+        for (Map.Entry f: m_msFeature.entrySet()){
             simList.put((String)f.getKey(), m_msFeatureWeight * cosine.getDistance(msFeatureQuery, (double[]) f.getValue()));
         }
-        for (Map.Entry f: energyFeature.entrySet()){
+        for (Map.Entry f: m_energyFeature.entrySet()){
             simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_energyFeatureWeight * cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
         }
-        for (Map.Entry f: zcFeature.entrySet()){
+        for (Map.Entry f: m_zcFeature.entrySet()){
             simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_zcFeatureWeight * cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
         }
-        for (Map.Entry f: mfccFeature.entrySet()){
+        for (Map.Entry f: m_mfccFeature.entrySet()){
             simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_mfccFeatureWeight * cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
 

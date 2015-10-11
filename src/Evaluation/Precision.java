@@ -12,7 +12,7 @@ import Search.SearchDemo;
 public class Precision {
 	private static final int k = 20;
 
-	public static double evaluate(String path, boolean useMsFeature, boolean useEnergyFeature, boolean useZcFeature, boolean useMfccFeature) {
+	public static double evaluate(String path, SearchDemo searchDemo) {
 		double totalPrecision = 0;
 
 		File folder = new File(path);
@@ -27,7 +27,7 @@ public class Precision {
 				ArrayList<String> resultFiles = new ArrayList<String>();
 				File queryAudio = listOfFiles[d];
 
-				SearchDemo searchDemo = new SearchDemo(useMsFeature, useEnergyFeature, useZcFeature, useMfccFeature);
+				
 				resultFiles = searchDemo.resultList(queryAudio.getAbsolutePath());
 
 				for (int i = 0; i < resultFiles.size(); i++) {
