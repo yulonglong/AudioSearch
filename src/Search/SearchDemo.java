@@ -167,6 +167,18 @@ public class SearchDemo {
             e.printStackTrace();
         }
     }
+    
+    private void normalizeValue(HashMap<String,Double> map) {
+    	double maxValue = 1;
+    	for (Map.Entry<String, Double> f: map.entrySet()){
+        	if (f.getValue() > maxValue) {
+        		maxValue = f.getValue();
+        	}
+        }
+    	for (Map.Entry<String, Double> f: map.entrySet()){
+        	map.put(f.getKey(), f.getValue()/maxValue);
+        }
+    }
 
     /***
      * Get the distances between features of the selected query audio and ones of the train set;
@@ -210,6 +222,10 @@ public class SearchDemo {
         for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
         	cosineMfccSimList.put(f.getKey(), (Cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
+        normalizeValue(cosineMsSimList);
+        normalizeValue(cosineEnergySimList);
+        normalizeValue(cosineZcSimList);
+        normalizeValue(cosineMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
         	cosineSimList.put(f.getKey(), (m_msFeatureWeight * cosineMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cosineEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cosineZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cosineMfccSimList.get(f.getKey())));
@@ -234,6 +250,10 @@ public class SearchDemo {
         for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
         	euclideanMfccSimList.put(f.getKey(), (Euclidean.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
+        normalizeValue(euclideanMsSimList);
+        normalizeValue(euclideanEnergySimList);
+        normalizeValue(euclideanZcSimList);
+        normalizeValue(euclideanMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
         	euclideanSimList.put(f.getKey(), (m_msFeatureWeight * euclideanMsSimList.get(f.getKey())) + (m_energyFeatureWeight * euclideanEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * euclideanZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * euclideanMfccSimList.get(f.getKey())));
@@ -258,6 +278,10 @@ public class SearchDemo {
         for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
         	cityblockMfccSimList.put(f.getKey(), (Euclidean.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
         }
+        normalizeValue(cityblockMsSimList);
+        normalizeValue(cityblockEnergySimList);
+        normalizeValue(cityblockZcSimList);
+        normalizeValue(cityblockMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
         	cityblockSimList.put(f.getKey(), (m_msFeatureWeight * cityblockMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cityblockEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cityblockZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cityblockMfccSimList.get(f.getKey())));
