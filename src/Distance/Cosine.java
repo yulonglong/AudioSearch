@@ -7,7 +7,6 @@ public class Cosine {
     public static double getDistance(double[] query1, double[] query2){
         if (query1.length != query2.length){
             System.err.println("The dimension of the two vectors does not match!");
-
             System.exit(1);
         }
 
@@ -31,6 +30,6 @@ public class Cosine {
             similarity = 0.0;
         }
 
-        return -similarity;
+        return 1.0-similarity;
     }
 }

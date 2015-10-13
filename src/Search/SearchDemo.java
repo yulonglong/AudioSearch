@@ -7,7 +7,9 @@ import Feature.ZeroCrossing;
 import Player.SoundEffectDemo;
 import SignalProcess.Frames;
 import SignalProcess.WaveIO;
+import Distance.CityBlock;
 import Distance.Cosine;
+import Distance.Euclidean;
 import Tool.SortHashMapByValue;
 
 import java.io.BufferedReader;
@@ -36,6 +38,10 @@ public class SearchDemo {
 	private double m_energyFeatureWeight = 0;
 	private double m_zcFeatureWeight = 0;
 	private double m_mfccFeatureWeight= 0;
+	
+	private double m_cosineWeight = 1;
+	private double m_euclideanWeight = 1;
+	private double m_cityblockWeight = 1;
 	
     HashMap<String, double[]> m_msFeature;
     HashMap<String, double[]> m_energyFeature;
@@ -164,30 +170,95 @@ public class SearchDemo {
         mfcc.process(inputSignal);
         double[] mfccFeatureQuery = mfcc.getMeanFeature();
         
-        HashMap<String, Double> simList = new HashMap<String, Double>();
-
+        
+        // Get cosine SimList
+        HashMap<String, Double> cosineSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cosineMsSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cosineEnergySimList = new HashMap<String, Double>();
+        HashMap<String, Double> cosineZcSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cosineMfccSimList = new HashMap<String, Double>();
+        
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
-            simList.put((String)f.getKey(), m_msFeatureWeight * Cosine.getDistance(msFeatureQuery, (double[]) f.getValue()));
+        	cosineMsSimList.put(f.getKey(), (Cosine.getDistance(msFeatureQuery, (double[]) f.getValue())));
+        	// System.out.println(cosineMsSimList.get(f.getKey()));
         }
         for (Map.Entry<String,double[]> f: m_energyFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_energyFeatureWeight * Cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
+        	cosineEnergySimList.put(f.getKey(), (Cosine.getDistance(energyFeatureQuery, (double[]) f.getValue())));
         }
         for (Map.Entry<String,double[]> f: m_zcFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_zcFeatureWeight * Cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
+        	cosineZcSimList.put(f.getKey(), (Cosine.getDistance(zcFeatureQuery, (double[]) f.getValue())));
         }
         for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
-            simList.put((String)f.getKey(), simList.get((String)f.getKey()) + (m_mfccFeatureWeight * Cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
+        	cosineMfccSimList.put(f.getKey(), (Cosine.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
+        }
+        // Combine 4 features
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	cosineSimList.put(f.getKey(), (m_msFeatureWeight * cosineMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cosineEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cosineZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cosineMfccSimList.get(f.getKey())));
+        }
+        
+        // Get Euclidean SimList
+        HashMap<String, Double> euclideanSimList = new HashMap<String, Double>();
+        HashMap<String, Double> euclideanMsSimList = new HashMap<String, Double>();
+        HashMap<String, Double> euclideanEnergySimList = new HashMap<String, Double>();
+        HashMap<String, Double> euclideanZcSimList = new HashMap<String, Double>();
+        HashMap<String, Double> euclideanMfccSimList = new HashMap<String, Double>();
+        
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	euclideanMsSimList.put(f.getKey(), (Euclidean.getDistance(msFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_energyFeature.entrySet()){
+        	euclideanEnergySimList.put(f.getKey(), (Euclidean.getDistance(energyFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_zcFeature.entrySet()){
+        	euclideanZcSimList.put(f.getKey(), (Euclidean.getDistance(zcFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
+        	euclideanMfccSimList.put(f.getKey(), (Euclidean.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
+        }
+        // Combine 4 features
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	euclideanSimList.put(f.getKey(), (m_msFeatureWeight * euclideanMsSimList.get(f.getKey())) + (m_energyFeatureWeight * euclideanEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * euclideanZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * euclideanMfccSimList.get(f.getKey())));
+        }
+        
+        // Get CityBlock SimList
+        HashMap<String, Double> cityblockSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cityblockMsSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cityblockEnergySimList = new HashMap<String, Double>();
+        HashMap<String, Double> cityblockZcSimList = new HashMap<String, Double>();
+        HashMap<String, Double> cityblockMfccSimList = new HashMap<String, Double>();
+        
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	cityblockMsSimList.put(f.getKey(), (Euclidean.getDistance(msFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_energyFeature.entrySet()){
+        	cityblockEnergySimList.put(f.getKey(), (Euclidean.getDistance(energyFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_zcFeature.entrySet()){
+        	cityblockZcSimList.put(f.getKey(), (Euclidean.getDistance(zcFeatureQuery, (double[]) f.getValue())));
+        }
+        for (Map.Entry<String,double[]> f: m_mfccFeature.entrySet()){
+        	cityblockMfccSimList.put(f.getKey(), (Euclidean.getDistance(mfccFeatureQuery, (double[]) f.getValue())));
+        }
+        // Combine 4 features
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	cityblockSimList.put(f.getKey(), (m_msFeatureWeight * cityblockMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cityblockEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cityblockZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cityblockMfccSimList.get(f.getKey())));
+        }
+        
+        // Overall
+        HashMap<String, Double> simList = new HashMap<String, Double>();
+        for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
+        	simList.put(f.getKey(), (m_cosineWeight * cosineSimList.get(f.getKey())) + (m_euclideanWeight * euclideanSimList.get(f.getKey())) + (m_cityblockWeight * cityblockSimList.get(f.getKey())));
         }
 
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
         ArrayList<String> result = sortHM.sort(simList);
 
-//        String out = query + ":";
-//        for(int j = 0; j < result.size(); j++){
-//            out += "\t" + result.get(j);
-//        }
-//
-//        System.out.println(out);
+        String out = query + ":";
+        for(int j = 0; j < result.size(); j++){
+            out += "\t" + result.get(j);
+        }
+
+        System.out.println(out);
         return result;
     }
 

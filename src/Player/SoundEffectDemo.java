@@ -83,6 +83,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         runTestButton.addActionListener(this);
         
         trainButton = new JButton("Train");
+        trainButton.setEnabled(false);
         trainButton.addActionListener(this);
         
         runGAButton = new JButton("Run GA");
