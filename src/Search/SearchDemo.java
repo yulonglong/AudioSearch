@@ -34,14 +34,18 @@ public class SearchDemo {
 	private static final double s_zcFeatureWeight = 1;
 	private static final double s_mfccFeatureWeight = 1;
 	
+	private static final double s_cosineWeight = 1;
+	private static final double s_euclideanWeight = 1;
+	private static final double s_cityblockWeight = 1;
+	
 	private double m_msFeatureWeight = 0;
 	private double m_energyFeatureWeight = 0;
 	private double m_zcFeatureWeight = 0;
 	private double m_mfccFeatureWeight= 0;
 	
-	private double m_cosineWeight = 1;
-	private double m_euclideanWeight = 1;
-	private double m_cityblockWeight = 1;
+	private double m_cosineWeight = 0;
+	private double m_euclideanWeight = 0;
+	private double m_cityblockWeight = 0;
 	
     HashMap<String, double[]> m_msFeature;
     HashMap<String, double[]> m_energyFeature;
@@ -68,11 +72,26 @@ public class SearchDemo {
 		if (useMfccFeature) m_mfccFeatureWeight = s_mfccFeatureWeight;
 	}
 	
+	public void useDefinedSimilarityWeight(boolean useCosine, boolean useEuclidean, boolean useCityBlock) {
+		m_cosineWeight = 0;
+		m_euclideanWeight = 0;
+		m_cityblockWeight = 0;
+		if (useCosine) m_cosineWeight = s_cosineWeight;
+		if (useEuclidean) m_euclideanWeight = s_euclideanWeight;
+		if (useCityBlock) m_cityblockWeight = s_cityblockWeight;
+	}
+	
 	public void setWeight(double msWeight, double energyWeight, double zcWeight, double mfccWeight) {
 		m_msFeatureWeight = msWeight;
 		m_energyFeatureWeight = energyWeight;
 		m_zcFeatureWeight = zcWeight;
 		m_mfccFeatureWeight = mfccWeight;
+	}
+	
+	public void setSimilarityWeight(double cosineWeight, double euclideanWeight, double cityblockWeight) {
+		m_cosineWeight = cosineWeight;
+		m_euclideanWeight = euclideanWeight;
+		m_cityblockWeight = cityblockWeight;
 	}
 	
     /***

@@ -37,6 +37,10 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 	JCheckBox m_zcCheckBox = new JCheckBox("Zero Crossing");
 	JCheckBox m_mfccCheckBox = new JCheckBox("MFCC");
 	
+	JCheckBox m_cosineCheckBox = new JCheckBox("Cosine");
+	JCheckBox m_euclideanCheckBox = new JCheckBox("Euclidean");
+	JCheckBox m_cityblockCheckBox = new JCheckBox("City Block");
+	
 	int m_windowWidth = 1366;
 	int m_windowHeight = 900;
 
@@ -97,10 +101,22 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         queryPanel.add(trainButton);
         queryPanel.add(runGAButton);
         
+        JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
+        separator.setPreferredSize(new Dimension(3,50));
+        queryPanel.add(separator, "growx, wrap");
+        
         queryPanel.add(m_msCheckBox);
         queryPanel.add(m_energyCheckBox);
         queryPanel.add(m_zcCheckBox);
         queryPanel.add(m_mfccCheckBox);
+        
+        JSeparator separator2 = new JSeparator(SwingConstants.VERTICAL);
+        separator2.setPreferredSize(new Dimension(3,50));
+        queryPanel.add(separator2, "growx, wrap");
+        
+        queryPanel.add(m_cosineCheckBox);
+        queryPanel.add(m_euclideanCheckBox);
+        queryPanel.add(m_cityblockCheckBox);
 
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new GridLayout(0, 4, 60, 60));
@@ -153,6 +169,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         }else if (e.getSource() == searchButton){
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
+        	m_searchDemo.useDefinedSimilarityWeight(m_cosineCheckBox.isSelected(), m_euclideanCheckBox.isSelected(), m_cityblockCheckBox.isSelected());
             resultFiles = m_searchDemo.resultList(queryAudio.getAbsolutePath());
 
             for (int i = 0; i < resultFiles.size(); i ++){
@@ -166,6 +183,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         }else if (e.getSource() == runTestButton) {
         	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         	m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
+        	m_searchDemo.useDefinedSimilarityWeight(m_cosineCheckBox.isSelected(), m_euclideanCheckBox.isSelected(), m_cityblockCheckBox.isSelected());
         	System.out.println(Precision.evaluate(m_searchDemo));
         	setCursor(Cursor.getDefaultCursor());
         }else if (e.getSource() == trainButton) {
