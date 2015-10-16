@@ -124,10 +124,42 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         for (int i = 0; i < resultLabels.length; i ++){
             resultLabels[i] = new JLabel();
 
+            // Add Mouse Click event to the JLabels (result)
+            final int j = i;
+            resultLabels[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (SwingUtilities.isLeftMouseButton(e)) {
+						relevanceFeedback(j, true);
+						System.out.println("Positive relevance feedback at index " + j);
+					}
+					if (SwingUtilities.isRightMouseButton(e)) {
+						relevanceFeedback(j, false);
+						System.out.println("Negative relevance feedback at index " + j);
+					}
+
+					// Code below here is for feedback that the image is clicked on.
+					resultLabels[j].setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					try {
+						Thread.sleep(500);
+					} catch(InterruptedException ex) {
+						Thread.currentThread().interrupt();
+					} finally {
+						resultLabels[j].setCursor(Cursor.getDefaultCursor());
+					}
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					resultLabels[j].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					resultLabels[j].setCursor(Cursor.getDefaultCursor());
+				}
+			});
+            
             resultButton[i] = new JButton(resultLabels[i].getText());
-
             resultButton[i].addActionListener(this);
-
             resultButton[i].setVisible(false);
             resultPanel.add(resultLabels[i]);
             resultPanel.add(resultButton[i]);
@@ -171,12 +203,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
             m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
         	m_searchDemo.useDefinedSimilarityWeight(m_cosineCheckBox.isSelected(), m_euclideanCheckBox.isSelected(), m_cityblockCheckBox.isSelected());
             resultFiles = m_searchDemo.resultList(queryAudio.getAbsolutePath());
-
-            for (int i = 0; i < resultFiles.size(); i ++){
-                resultLabels[i].setText(resultFiles.get(i));
-                resultButton[i].setText(resultFiles.get(i));
-                resultButton[i].setVisible(true);
-            }
+            updateResultUI();
             setCursor(Cursor.getDefaultCursor());
         }else if (e.getSource() == queryButton){
             new SoundEffect(queryAudio.getAbsolutePath()).play();
@@ -207,6 +234,21 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
             }
         }
     }
+    
+    private void updateResultUI() {
+    	for (int i = 0; i < resultFiles.size(); i ++){
+            resultLabels[i].setText(resultFiles.get(i));
+            resultButton[i].setText(resultFiles.get(i));
+            resultButton[i].setVisible(true);
+        }
+    }
+    
+	private void relevanceFeedback(int index, boolean isPositive) {
+		m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
+    	m_searchDemo.useDefinedSimilarityWeight(m_cosineCheckBox.isSelected(), m_euclideanCheckBox.isSelected(), m_cityblockCheckBox.isSelected());
+        resultFiles = m_searchDemo.resultList(queryAudio.getAbsolutePath(), s_basePath + resultFiles.get(index), isPositive);
+        updateResultUI();
+	}
 
     public static void main(String[] args) {
         new SoundEffectDemo();

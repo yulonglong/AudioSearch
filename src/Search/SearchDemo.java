@@ -179,6 +179,51 @@ public class SearchDemo {
         	map.put(f.getKey(), f.getValue()/maxValue);
         }
     }
+    
+    public ArrayList<String> resultList(String query){ 
+    	HashMap<String, Double> simList = getHashMapScore(query);
+    	
+        SortHashMapByValue sortHM = new SortHashMapByValue(20);
+        ArrayList<String> result = sortHM.sort(simList);
+
+//        String out = query + ":";
+//        for(int j = 0; j < result.size(); j++){
+//            out += "\t" + result.get(j);
+//        }
+//
+//        System.out.println(out);
+        return result;
+    }
+    
+    public ArrayList<String> resultList (String query, String feedback, boolean isPositive) {
+    	final double feedbackConstant = 0.5;
+    	HashMap<String, Double> simList = getHashMapScore(query);
+    	HashMap<String, Double> feedbackList = getHashMapScore(feedback);
+    	
+    	for (Map.Entry<String,Double> f: feedbackList.entrySet()) {
+    		Double originalScore = simList.get(f.getKey());
+    		Double feedbackScore = f.getValue();
+    		Double finalScore;
+    		if (isPositive) {
+    			finalScore = originalScore + (feedbackConstant*feedbackScore);
+    		}
+    		else {
+    			finalScore = originalScore - (feedbackConstant*feedbackScore);
+    		}
+    		simList.put(f.getKey(), finalScore);
+    	}
+    	
+        SortHashMapByValue sortHM = new SortHashMapByValue(20);
+        ArrayList<String> result = sortHM.sort(simList);
+
+//        String out = query + ":";
+//        for(int j = 0; j < result.size(); j++){
+//            out += "\t" + result.get(j);
+//        }
+//
+//        System.out.println(out);
+        return result;
+    }
 
     /***
      * Get the distances between features of the selected query audio and ones of the train set;
@@ -187,7 +232,7 @@ public class SearchDemo {
      * @param query the selected query audio file;
      * @return the top 20 similar audio files;
      */
-    public ArrayList<String> resultList(String query){
+    private HashMap<String, Double> getHashMapScore(String query){
         WaveIO waveIO = new WaveIO();
 
         short[] inputSignal = waveIO.readWave(query);
@@ -292,17 +337,8 @@ public class SearchDemo {
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
         	simList.put(f.getKey(), (m_cosineWeight * cosineSimList.get(f.getKey())) + (m_euclideanWeight * euclideanSimList.get(f.getKey())) + (m_cityblockWeight * cityblockSimList.get(f.getKey())));
         }
-
-        SortHashMapByValue sortHM = new SortHashMapByValue(20);
-        ArrayList<String> result = sortHM.sort(simList);
-
-//        String out = query + ":";
-//        for(int j = 0; j < result.size(); j++){
-//            out += "\t" + result.get(j);
-//        }
-//
-//        System.out.println(out);
-        return result;
+        
+        return simList;
     }
 
     /**
