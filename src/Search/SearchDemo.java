@@ -51,6 +51,8 @@ public class SearchDemo {
     HashMap<String, double[]> m_energyFeature;
     HashMap<String, double[]> m_zcFeature;
     HashMap<String, double[]> m_mfccFeature;
+    
+    HashMap<String, Double> m_simList;
 	
 	public SearchDemo() {
 		SoundEffectDemo.s_progressBar.setMinimum(0);
@@ -181,10 +183,11 @@ public class SearchDemo {
     }
     
     public ArrayList<String> resultList(String query){ 
-    	HashMap<String, Double> simList = getHashMapScore(query);
+    	m_simList = new HashMap<String, Double>();
+    	m_simList = getHashMapScore(query);
     	
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
-        ArrayList<String> result = sortHM.sort(simList);
+        ArrayList<String> result = sortHM.sort(m_simList);
 
 //        String out = query + ":";
 //        for(int j = 0; j < result.size(); j++){
@@ -197,11 +200,11 @@ public class SearchDemo {
     
     public ArrayList<String> resultList (String query, String feedback, boolean isPositive) {
     	final double feedbackConstant = 0.5;
-    	HashMap<String, Double> simList = getHashMapScore(query);
+    	// HashMap<String, Double> simList = getHashMapScore(query);
     	HashMap<String, Double> feedbackList = getHashMapScore(feedback);
     	
     	for (Map.Entry<String,Double> f: feedbackList.entrySet()) {
-    		Double originalScore = simList.get(f.getKey());
+    		Double originalScore = m_simList.get(f.getKey());
     		Double feedbackScore = f.getValue();
     		Double finalScore;
     		if (isPositive) {
@@ -210,11 +213,11 @@ public class SearchDemo {
     		else {
     			finalScore = originalScore - (feedbackConstant*feedbackScore);
     		}
-    		simList.put(f.getKey(), finalScore);
+    		m_simList.put(f.getKey(), finalScore);
     	}
     	
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
-        ArrayList<String> result = sortHM.sort(simList);
+        ArrayList<String> result = sortHM.sort(m_simList);
 
 //        String out = query + ":";
 //        for(int j = 0; j < result.size(); j++){
