@@ -92,7 +92,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         trainButton.addActionListener(this);
         
         runGAButton = new JButton("Run GA");
-        runGAButton.setEnabled(false);
+        // runGAButton.setEnabled(false);
         runGAButton.addActionListener(this);
 
         JPanel queryPanel = new JPanel();

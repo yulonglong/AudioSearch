@@ -7,15 +7,15 @@ import java.util.Random;
 import Evaluation.Precision;
 
 class Gene {
-	double[] w = new double[7];
+	double[] w = new double[12];
 	double precision;
 
 	Gene() {
 		precision = 0.0;
-		w[0] = w[2] = w[3] = w[4] = w[5] = w[6] = 1.0;
+		w[0] = w[2] = w[3] = w[4] = w[5] = w[6] = w[7] = w[8] =w[9] =w[10] =w[11] =1.0;
 	}
 
-	Gene(double _w1, double _w2, double _w3, double _w4, double _w5, double _w6, double _w7) {
+	Gene(double _w1, double _w2, double _w3, double _w4, double _w5, double _w6, double _w7, double _w8, double _w9, double _w10, double _w11, double _w12) {
 		w[0] = _w1;
 		w[1] = _w2;
 		w[2] = _w3;
@@ -23,6 +23,11 @@ class Gene {
 		w[4] = _w5;
 		w[5] = _w6;
 		w[6] = _w7;
+		w[7] = _w8;
+		w[8] = _w9;
+		w[9] = _w10;
+		w[10] = _w11;
+		w[11] = _w12;
 	}
 }
 
@@ -55,11 +60,11 @@ public class GeneticAlgorithm {
 	private void generateRandomGenes(ArrayList<Gene> geneList) {
 		Random random = new Random();
 		for (int j = 0; j < bestNGenes; j++) {
-			double[] value = new double[7];
-			for (int i = 0; i < 7; i++) {
+			double[] value = new double[12];
+			for (int i = 0; i < 12; i++) {
 				value[i] = rangeMin + (rangeMax - rangeMin) * random.nextDouble();
 			}
-			Gene gene = new Gene(value[0], value[1], value[2], value[3], value[4], value[5], value[6]);
+			Gene gene = new Gene(value[0], value[1], value[2], value[3], value[4], value[5], value[6], value[7], value[8], value[9], value[10], value[11]);
 			geneList.add(gene);
 		}
 	}
@@ -69,8 +74,8 @@ public class GeneticAlgorithm {
 		Random randomMutation = new Random();
 		Random randomPositiveMutation = new Random();
 		Random randomValue = new Random();
-		double[] value = new double[7];
-		for (int i = 0; i < 7; i++) {
+		double[] value = new double[12];
+		for (int i = 0; i < 12; i++) {
 
 			// Crossover
 			if (randomCrossover.nextDouble() < 0.5) {
@@ -109,7 +114,7 @@ public class GeneticAlgorithm {
 				value[i] = -1 * value[i];
 			}
 		}
-		Gene offspring = new Gene(value[0], value[1], value[2], value[3], value[4], value[5], value[6]);
+		Gene offspring = new Gene(value[0], value[1], value[2], value[3], value[4], value[5], value[6], value[7], value[8], value[9], value[10], value[11]);
 		return offspring;
 	}
 
@@ -134,8 +139,12 @@ public class GeneticAlgorithm {
 	}
 	
 	private double runTestGA(Gene currGene) {
-		m_searchDemo.setWeight(currGene.w[0], currGene.w[1], currGene.w[2], currGene.w[3]);
-		m_searchDemo.setSimilarityWeight(currGene.w[4], currGene.w[5], currGene.w[6]);
+//		m_searchDemo.setWeight(currGene.w[0], currGene.w[1], currGene.w[2], currGene.w[3]);
+//		m_searchDemo.setSimilarityWeight(currGene.w[4], currGene.w[5], currGene.w[6]);
+		m_searchDemo.setSimilarityWeightMs(currGene.w[0], currGene.w[1], currGene.w[2]);
+		m_searchDemo.setSimilarityWeightEnergy(currGene.w[3], currGene.w[4], currGene.w[5]);
+		m_searchDemo.setSimilarityWeightZc(currGene.w[6], currGene.w[7], currGene.w[8]);
+		m_searchDemo.setSimilarityWeightMfcc(currGene.w[9], currGene.w[10], currGene.w[11]);
 		return Precision.evaluate(m_searchDemo);
 	}
 
@@ -150,14 +159,14 @@ public class GeneticAlgorithm {
 			generateRandomGenes(geneList);
 			for (Gene currGene : geneList) {
 				currGene.precision = runTestGA(currGene);
-				System.out.println(currGene.w[0] + "--" + currGene.w[1] + "--" + currGene.w[2] + "--" + currGene.w[3] + " ||| " + currGene.w[4] + "--" + currGene.w[5] + "--" + currGene.w[6]);
+				System.out.println(currGene.w[0] + "--" + currGene.w[1] + "--" + currGene.w[2] + "--" + currGene.w[3] + "--" + currGene.w[4] + "--" + currGene.w[5] + "--" + currGene.w[6] + "--" + currGene.w[7] + "--" + currGene.w[8] + "--" + currGene.w[9] + "--" + currGene.w[10] + "--" + currGene.w[11]);
 				System.out.println("Mean Precision : " + currGene.precision);
 
 			}
 			geneList.sort(new GeneComparator());
 			for (int z = 0; z < bestNGenes; z++) {
 				Gene currGene = geneList.get(z);
-				System.err.println(currGene.w[0] + "--" + currGene.w[1] + "--" + currGene.w[2] + "--" + currGene.w[3]  + " ||| " + currGene.w[4] + "--" + currGene.w[5] + "--" + currGene.w[6]);
+				System.err.println(currGene.w[0] + "--" + currGene.w[1] + "--" + currGene.w[2] + "--" + currGene.w[3] + "--" + currGene.w[4] + "--" + currGene.w[5] + "--" + currGene.w[6] + "--" + currGene.w[7] + "--" + currGene.w[8] + "--" + currGene.w[9] + "--" + currGene.w[10] + "--" + currGene.w[11]);
 				System.err.println("Mean Precision : " + currGene.precision);
 			}
 		}
