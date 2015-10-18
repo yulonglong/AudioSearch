@@ -22,7 +22,7 @@ import java.util.*;
  * Created by workshop on 9/18/2015.
  */
 public class SearchDemo {
-	public static final boolean s_enableLogging = false;
+	public static final boolean s_enableLogging = true;
 	
 	public static final int s_numTrainingData = 1250;
 	
@@ -31,43 +31,23 @@ public class SearchDemo {
 	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
 	private static final String s_mfccFeaturePath = "data/feature/mfcc.txt";
 	
-	private static final double s_msFeatureWeight = 1;
-	private static final double s_energyFeatureWeight = 1;
-	private static final double s_zcFeatureWeight = 1;
-	private static final double s_mfccFeatureWeight = 1;
+	private static final double s_msFeatureWeight = 462.6082065715304;
+	private static final double s_energyFeatureWeight = 545.3160022031567;
+	private static final double s_zcFeatureWeight = 786.84652254;
+	private static final double s_mfccFeatureWeight = 362.7497443018521;
 	
-	private static final double s_cosineWeight = 1;
-	private static final double s_euclideanWeight = 1;
-	private static final double s_cityblockWeight = 1;
+	private static final double s_cosineWeight = 994.8863794410453;
+	private static final double s_euclideanWeight = 288.43219834158884;
+	private static final double s_cityblockWeight = -148.18298405621834;
 	
+	private double m_msFeatureWeight = 0;
+	private double m_energyFeatureWeight = 0;
+	private double m_zcFeatureWeight = 0;
+	private double m_mfccFeatureWeight= 0;
 	
-	private double m_msFeatureWeight = 1;
-	private double m_energyFeatureWeight = 1;
-	private double m_zcFeatureWeight = 1;
-	private double m_mfccFeatureWeight= 1;
-	
-	
-	private double m_cosineWeight = 1;
-	private double m_euclideanWeight = 1;
-	private double m_cityblockWeight = 1;
-	
-	private double m_cosineMsWeight = 0;
-	private double m_euclideanMsWeight = 0;
-	private double m_cityblockMsWeight = 0;
-
-	private double m_cosineEnergyWeight = 0;
-	private double m_euclideanEnergyWeight = 0;
-	private double m_cityblockEnergyWeight = 0;
-	
-	private double m_cosineZcWeight = 0;
-	private double m_euclideanZcWeight = 0;
-	private double m_cityblockZcWeight = 0;
-	
-	private double m_cosineMfccWeight = 0;
-	private double m_euclideanMfccWeight = 0;
-	private double m_cityblockMfccWeight = 0;
-	
-	
+	private double m_cosineWeight = 0;
+	private double m_euclideanWeight = 0;
+	private double m_cityblockWeight = 0;
 	
     HashMap<String, double[]> m_msFeature;
     HashMap<String, double[]> m_energyFeature;
@@ -116,30 +96,6 @@ public class SearchDemo {
 		m_cosineWeight = cosineWeight;
 		m_euclideanWeight = euclideanWeight;
 		m_cityblockWeight = cityblockWeight;
-	}
-	
-	public void setSimilarityWeightMs(double cosineWeight, double euclideanWeight, double cityblockWeight) {
-		m_cosineMsWeight = cosineWeight;
-		m_euclideanMsWeight = euclideanWeight;
-		m_cityblockMsWeight = cityblockWeight;
-	}
-	
-	public void setSimilarityWeightEnergy(double cosineWeight, double euclideanWeight, double cityblockWeight) {
-		m_cosineEnergyWeight = cosineWeight;
-		m_euclideanEnergyWeight = euclideanWeight;
-		m_cityblockEnergyWeight = cityblockWeight;
-	}
-	
-	public void setSimilarityWeightZc(double cosineWeight, double euclideanWeight, double cityblockWeight) {
-		m_cosineZcWeight = cosineWeight;
-		m_euclideanZcWeight = euclideanWeight;
-		m_cityblockZcWeight = cityblockWeight;
-	}
-	
-	public void setSimilarityWeightMfcc(double cosineWeight, double euclideanWeight, double cityblockWeight) {
-		m_cosineMfccWeight = cosineWeight;
-		m_euclideanMfccWeight = euclideanWeight;
-		m_cityblockMfccWeight = cityblockWeight;
 	}
 	
     /***
@@ -325,7 +281,7 @@ public class SearchDemo {
         normalizeValue(cosineMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
-        	cosineSimList.put(f.getKey(), (m_cosineMsWeight*m_msFeatureWeight * cosineMsSimList.get(f.getKey())) + (m_cosineEnergyWeight*m_energyFeatureWeight * cosineEnergySimList.get(f.getKey())) + (m_cosineZcWeight*m_zcFeatureWeight * cosineZcSimList.get(f.getKey())) + (m_cosineMfccWeight*m_mfccFeatureWeight * cosineMfccSimList.get(f.getKey())));
+        	cosineSimList.put(f.getKey(), (m_msFeatureWeight * cosineMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cosineEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cosineZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cosineMfccSimList.get(f.getKey())));
         }
         
         // Get Euclidean SimList
@@ -353,7 +309,7 @@ public class SearchDemo {
         normalizeValue(euclideanMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
-        	euclideanSimList.put(f.getKey(), (m_euclideanMsWeight*m_msFeatureWeight * euclideanMsSimList.get(f.getKey())) + (m_euclideanEnergyWeight*m_energyFeatureWeight * euclideanEnergySimList.get(f.getKey())) + (m_euclideanZcWeight*m_zcFeatureWeight * euclideanZcSimList.get(f.getKey())) + (m_euclideanMfccWeight*m_mfccFeatureWeight * euclideanMfccSimList.get(f.getKey())));
+        	euclideanSimList.put(f.getKey(), (m_msFeatureWeight * euclideanMsSimList.get(f.getKey())) + (m_energyFeatureWeight * euclideanEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * euclideanZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * euclideanMfccSimList.get(f.getKey())));
         }
         
         // Get CityBlock SimList
@@ -381,7 +337,7 @@ public class SearchDemo {
         normalizeValue(cityblockMfccSimList);
         // Combine 4 features
         for (Map.Entry<String,double[]> f: m_msFeature.entrySet()){
-        	cityblockSimList.put(f.getKey(), (m_cityblockMsWeight*m_msFeatureWeight * cityblockMsSimList.get(f.getKey())) + (m_cityblockEnergyWeight*m_energyFeatureWeight * cityblockEnergySimList.get(f.getKey())) + (m_cityblockZcWeight*m_zcFeatureWeight * cityblockZcSimList.get(f.getKey())) + (m_cityblockMfccWeight*m_mfccFeatureWeight * cityblockMfccSimList.get(f.getKey())));
+        	cityblockSimList.put(f.getKey(), (m_msFeatureWeight * cityblockMsSimList.get(f.getKey())) + (m_energyFeatureWeight * cityblockEnergySimList.get(f.getKey())) + (m_zcFeatureWeight * cityblockZcSimList.get(f.getKey())) + (m_mfccFeatureWeight * cityblockMfccSimList.get(f.getKey())));
         }
         
         // Overall
