@@ -32,6 +32,9 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     public static final String s_basePath = "D:/GitHub/AudioSearchData/data/input/train/";
     public static final String s_testPath = "D:/GitHub/AudioSearchData/data/input/test/";
     
+// public static final String s_basePath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\train\\";
+// public static final String s_testPath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\test\\";
+    
     JCheckBox m_msCheckBox = new JCheckBox("Magnitude Spectrum");
 	JCheckBox m_energyCheckBox = new JCheckBox("Energy");
 	JCheckBox m_zcCheckBox = new JCheckBox("Zero Crossing");
