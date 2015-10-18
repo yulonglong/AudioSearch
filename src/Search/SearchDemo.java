@@ -38,7 +38,7 @@ public class SearchDemo {
 	
 	private static final double s_cosineWeight = 994.8863794410453;
 	private static final double s_euclideanWeight = 288.43219834158884;
-	private static final double s_cityblockWeight = 148.18298405621834;
+	private static final double s_cityblockWeight = -148.18298405621834;
 	
 	private double m_msFeatureWeight = 0;
 	private double m_energyFeatureWeight = 0;
