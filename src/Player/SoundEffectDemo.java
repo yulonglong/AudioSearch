@@ -1,14 +1,30 @@
 package Player;
-import Search.GeneticAlgorithm;
-import Search.SearchDemo;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import Evaluation.Precision;
+import Search.GeneticAlgorithm;
+import Search.SearchDemo;
 
 /**
  * Created by workshop on 9/18/2015.
@@ -19,7 +35,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     JButton openButton, searchButton, queryButton, runTestButton, trainButton, runGAButton;
     JFileChooser fileChooser;
     public static JProgressBar s_progressBar = new JProgressBar();
-    
+
     File queryAudio = null;
     int resultSize = 20;
     /**
@@ -29,28 +45,31 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     /**
      * Please Replace the 'basePath' with specific path of train set of audio files in your PC.
      */
-    public static final String s_basePath = "D:/GitHub/AudioSearchData/data/input/train/";
-    public static final String s_testPath = "D:/GitHub/AudioSearchData/data/input/test/";
-    
+
+    public static final String s_basePath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\train\\";
+    public static final String s_testPath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\test\\";
+//    public static final String s_basePath = "D:/GitHub/AudioSearchData/data/input/train/";
+//    public static final String s_testPath = "D:/GitHub/AudioSearchData/data/input/test/";
+
 // public static final String s_basePath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\train\\";
 // public static final String s_testPath = "C:\\Users\\Ian\\WorkspaceGeneral\\AudioSearchData\\data\\input\\test\\";
-    
+
     JCheckBox m_msCheckBox = new JCheckBox("Magnitude Spectrum");
 	JCheckBox m_energyCheckBox = new JCheckBox("Energy");
 	JCheckBox m_zcCheckBox = new JCheckBox("Zero Crossing");
 	JCheckBox m_mfccCheckBox = new JCheckBox("MFCC");
-	
+
 	JCheckBox m_cosineCheckBox = new JCheckBox("Cosine");
 	JCheckBox m_euclideanCheckBox = new JCheckBox("Euclidean");
 	JCheckBox m_cityblockCheckBox = new JCheckBox("City Block");
-	
+
 	int m_windowWidth = 1366;
 	int m_windowHeight = 900;
 
     JButton[] resultButton = new JButton[resultSize];
     JLabel [] resultLabels = new JLabel[resultSize];
     ArrayList<String> resultFiles = new ArrayList<String>();
-    
+
     SearchDemo m_searchDemo;
 
     // Constructor
@@ -58,14 +77,14 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
     	m_contentPane = (JPanel)this.getContentPane();
         setSize(m_windowWidth,m_windowHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	
+
     	// Initialize ProgressBar
-		
+
 		s_progressBar.setStringPainted(true);
 		m_contentPane.add(s_progressBar);
 		m_contentPane.setVisible(true);
 		setVisible(true);
-    	
+
     	m_searchDemo = new SearchDemo();
 
         m_contentPane.remove(s_progressBar);
@@ -85,15 +104,15 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         searchButton = new JButton("Search");
         searchButton.addActionListener(this);
-        
+
         runTestButton = new JButton("Run Test");
         runTestButton.setEnabled(false);
         runTestButton.addActionListener(this);
-        
+
         trainButton = new JButton("Train");
         trainButton.setEnabled(false);
         trainButton.addActionListener(this);
-        
+
         runGAButton = new JButton("Run GA");
         // runGAButton.setEnabled(false);
         runGAButton.addActionListener(this);
@@ -105,20 +124,20 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         queryPanel.add(runTestButton);
         queryPanel.add(trainButton);
         queryPanel.add(runGAButton);
-        
+
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
         separator.setPreferredSize(new Dimension(3,50));
         queryPanel.add(separator, "growx, wrap");
-        
+
         queryPanel.add(m_msCheckBox);
         queryPanel.add(m_energyCheckBox);
         queryPanel.add(m_zcCheckBox);
         queryPanel.add(m_mfccCheckBox);
-        
+
         JSeparator separator2 = new JSeparator(SwingConstants.VERTICAL);
         separator2.setPreferredSize(new Dimension(3,50));
         queryPanel.add(separator2, "growx, wrap");
-        
+
         queryPanel.add(m_cosineCheckBox);
         queryPanel.add(m_euclideanCheckBox);
         queryPanel.add(m_cityblockCheckBox);
@@ -162,7 +181,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 					resultLabels[j].setCursor(Cursor.getDefaultCursor());
 				}
 			});
-            
+
             resultButton[i] = new JButton(resultLabels[i].getText());
             resultButton[i].addActionListener(this);
             resultButton[i].setVisible(false);
@@ -175,7 +194,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 
         m_contentPane.add(queryPanel, BorderLayout.PAGE_START);
         m_contentPane.add(resultPanel, BorderLayout.CENTER);
-        
+
         m_contentPane = (JPanel)this.getContentPane();
         setSize(m_windowWidth,m_windowHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -183,7 +202,8 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
 		setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent e){
+    @Override
+	public void actionPerformed(ActionEvent e){
         if (e.getSource() == openButton){
             if (fileChooser == null) {
                 fileChooser = new JFileChooser(querySet);
@@ -239,7 +259,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
             }
         }
     }
-    
+
     private void updateResultUI() {
     	for (int i = 0; i < resultFiles.size(); i ++){
             resultLabels[i].setText(resultFiles.get(i));
@@ -247,7 +267,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
             resultButton[i].setVisible(true);
         }
     }
-    
+
 	private void relevanceFeedback(int index, boolean isPositive) {
 		m_searchDemo.useDefinedWeight(m_msCheckBox.isSelected(), m_energyCheckBox.isSelected(), m_zcCheckBox.isSelected(), m_mfccCheckBox.isSelected());
     	m_searchDemo.useDefinedSimilarityWeight(m_cosineCheckBox.isSelected(), m_euclideanCheckBox.isSelected(), m_cityblockCheckBox.isSelected());
