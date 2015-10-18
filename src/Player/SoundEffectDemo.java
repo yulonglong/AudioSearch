@@ -69,7 +69,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         setVisible(false);
         // Pre-load all the sound files
         queryAudio = null;
-        SoundEffect.volume = SoundEffect.Volume.LOW;  // un-mute
+        SoundEffect.volume = SoundEffect.Volume.HIGH;  // un-mute
 
         // Set up UI components;
         openButton = new JButton("Select an audio clip...");
@@ -84,6 +84,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         searchButton.addActionListener(this);
         
         runTestButton = new JButton("Run Test");
+        runTestButton.setEnabled(false);
         runTestButton.addActionListener(this);
         
         trainButton = new JButton("Train");
@@ -91,6 +92,7 @@ public class SoundEffectDemo extends JFrame implements ActionListener{
         trainButton.addActionListener(this);
         
         runGAButton = new JButton("Run GA");
+        runGAButton.setEnabled(false);
         runGAButton.addActionListener(this);
 
         JPanel queryPanel = new JPanel();

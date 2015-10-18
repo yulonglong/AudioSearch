@@ -22,6 +22,8 @@ import java.util.*;
  * Created by workshop on 9/18/2015.
  */
 public class SearchDemo {
+	public static final boolean s_enableLogging = true;
+	
 	public static final int s_numTrainingData = 1250;
 	
 	private static final String s_msFeaturePath = "data/feature/magnitudeSpectrum.txt";
@@ -29,14 +31,14 @@ public class SearchDemo {
 	private static final String s_zcFeaturePath = "data/feature/zeroCrossing.txt";
 	private static final String s_mfccFeaturePath = "data/feature/mfcc.txt";
 	
-	private static final double s_msFeatureWeight = 1;
-	private static final double s_energyFeatureWeight = 1;
-	private static final double s_zcFeatureWeight = 1;
-	private static final double s_mfccFeatureWeight = 1;
+	private static final double s_msFeatureWeight = 462.6082065715304;
+	private static final double s_energyFeatureWeight = 545.3160022031567;
+	private static final double s_zcFeatureWeight = 786.84652254;
+	private static final double s_mfccFeatureWeight = 362.7497443018521;
 	
-	private static final double s_cosineWeight = 1;
-	private static final double s_euclideanWeight = 1;
-	private static final double s_cityblockWeight = 1;
+	private static final double s_cosineWeight = 994.8863794410453;
+	private static final double s_euclideanWeight = 288.43219834158884;
+	private static final double s_cityblockWeight = 148.18298405621834;
 	
 	private double m_msFeatureWeight = 0;
 	private double m_energyFeatureWeight = 0;
@@ -188,13 +190,14 @@ public class SearchDemo {
     	
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
         ArrayList<String> result = sortHM.sort(m_simList);
-
-//        String out = query + ":";
-//        for(int j = 0; j < result.size(); j++){
-//            out += "\t" + result.get(j);
-//        }
-//
-//        System.out.println(out);
+        
+        if (s_enableLogging) {
+	        String out = query + ":";
+	        for(int j = 0; j < result.size(); j++){
+	            out += "\t" + result.get(j);
+	        }
+	        System.out.println(out);
+        }
         return result;
     }
     
@@ -218,13 +221,15 @@ public class SearchDemo {
     	
         SortHashMapByValue sortHM = new SortHashMapByValue(20);
         ArrayList<String> result = sortHM.sort(m_simList);
-
-//        String out = query + ":";
-//        for(int j = 0; j < result.size(); j++){
-//            out += "\t" + result.get(j);
-//        }
-//
-//        System.out.println(out);
+        
+        if (s_enableLogging) {
+	        String out = query + ":";
+	        for(int j = 0; j < result.size(); j++){
+	            out += "\t" + result.get(j);
+	        }
+	
+	        System.out.println(out);
+        }
         return result;
     }
 
